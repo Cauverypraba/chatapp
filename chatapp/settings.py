@@ -71,16 +71,16 @@ TEMPLATES = [
 ]
 
 
-#redis_host = os.environ.get('REDIS_HOST', 'localhost')
-# CHANNEL_LAYERS = {
-#     "default": {
-#         "BACKEND": "asgi_redis.RedisChannelLayer",
-#         "CONFIG": {
-#             "hosts": [(redis_host, 6379)],
-#         },
-#         "ROUTING": "chatapp.routing.channel_routing",
-#     }
-# }
+redis_host = os.environ.get('REDIS_HOST', 'localhost')
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "asgi_redis.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(redis_host, 6379)],
+        },
+        "ROUTING": "chatapp.routing.channel_routing",
+    }
+}
 
 
 # Database
