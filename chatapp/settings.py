@@ -25,7 +25,7 @@ SECRET_KEY = 'ft=&r+k*^h$^o9kexv=&p_=i233oo@ybp6woxm@_^=(oz%zt-5'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'start',
+    'real_chat',
     'channels',
 ]
 
@@ -52,7 +52,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'chatapp.urls'
-ASGI_APPLICATION = 'chatapp.routing.channel_routing'
+ASGI_APPLICATION ='chatapp.routing.application'
 
 TEMPLATES = [
     {
@@ -76,9 +76,9 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [(redis_host, 6379)],
+            "hosts": [(redis_host, 6397)],
         },
-        "ROUTING": "chatapp.routing.channel_routing",
+        "ROUTING": "real_chat.routing.websocket_urlpatterns",
     }
 }
 
@@ -91,8 +91,11 @@ LOGOUT_REDIRECT_URL = "/"
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'studentdb',
+        'USER': 'postgres',
+        'PASSWORD': '1234',
+        'HOST': 'localhost',
     }
 }
 

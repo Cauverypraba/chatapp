@@ -19,12 +19,13 @@ from django.urls import path
 # from django.contrib.auth import views as auth_views
 from . import views
 
+app_name = 'real_chat'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.indexPage, name = 'homepage'),
-    path('base', views.base, name = 'base'),
+    #path('base', views.base, name = 'base'),
     path('<str:room_name>/', views.room, name='room'),
-    path('login', views.login, name = 'login'),
+    # path('login', views.login, name = 'login'),
     #path('logout', views.logout, name = 'logout'),
 ]
