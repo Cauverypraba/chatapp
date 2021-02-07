@@ -3,17 +3,11 @@ from django.db import models
 
 
 #@python_2_unicode_compatible
-class Room(models.Model):
-    """
-    A room for people to chat in.
-    """
 
-    # Room title
-    title = models.CharField(max_length=255)
+class chat(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField(default=False)
+    password = models.CharField(max_length=200)
 
-    # If only "staff" users are allowed (is_staff on django's User)
-    staff_only = models.BooleanField(default=False)
-
-    def str(self):
-        return self.title
-
+    # USERNAME_FIELD = 'email' 
+    # REQUIRED_FIELDS = ['username']

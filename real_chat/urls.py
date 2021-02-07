@@ -13,7 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
+#from django.contrib import admin
 from django.urls import path
 # from django.contrib.auth.views import LoginView
 # from django.contrib.auth import views as auth_views
@@ -22,10 +22,14 @@ from . import views
 app_name = 'real_chat'
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', views.indexPage, name = 'homepage'),
+    path('', views.index, name = 'index'),
+    path('indexPage', views.indexPage, name = 'indexpage'),
+    path('login',views.login,name='login'),
     #path('base', views.base, name = 'base'),
-    path('<str:room_name>/', views.room, name='room'),
-    # path('login', views.login, name = 'login'),
+    #path('<str:room_name>/', views.room, name = 'room'),
+    path('register', views.register, name = 'register'),
+    path('homePage', views.homePage, name='home'),
+    path('signupPage/', views.signupPage, name = 'signup'),
+    path('password_reset', views.password_reset, name = 'reset_password')
     #path('logout', views.logout, name = 'logout'),
 ]

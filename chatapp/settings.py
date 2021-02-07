@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+# AUTH_USER_MODEL = 'real_chat.chat'
 
 # Application definition
 
@@ -92,7 +93,7 @@ LOGOUT_REDIRECT_URL = "/"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'studentdb',
+        'NAME': 'chatdb',
         'USER': 'postgres',
         'PASSWORD': '1234',
         'HOST': 'localhost',
