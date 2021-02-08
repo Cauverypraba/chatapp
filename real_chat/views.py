@@ -1,4 +1,6 @@
-from django.shortcuts import render, redirect
+from django.http import HttpResponse 
+from django.shortcuts import render, redirect 
+from .forms import *
 from django.contrib.auth.decorators import login_required
 from django.utils.safestring import mark_safe
 from real_chat.models import chat
@@ -50,13 +52,25 @@ def register(request):
     email = request.POST.get('email')
     password = request.POST.get('psw')
     re_password = request.POST.get('psw-repeat')
+    mob_number = request.POST.get('mob.no')
+    prof_pic = request.POST.get('prof-pic')
     #print('register',name,email)
     pswrd = make_password(password)
     if(password == re_password):
-        db = chat(name=name, email=email, password=pswrd)
+        db = chat(name=name, email=email, password=pswrd, mobile_number=mob_number, profile_pic=prof_pic)
         db.save()
         return redirect('/indexPage')
-    #return render(request,'register.html')
+    if request.method == 'POST': 
+        db = chatForm(request.POST, request.FILES) 
+        if db.is_valid(): 
+            db.save() 
+            return redirect('success') 
+    else: 
+        form = chatForm() 
+        return render(request, 'register.html', {'form' : db})    
+
+def pic_uploaded(request): 
+    return HttpResponse('successfully uploaded')
 
 def password_reset(request):
     return render(request, 'password_reset.html')

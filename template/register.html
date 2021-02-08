@@ -89,6 +89,7 @@ a {
 </style>
 </head> -->
 
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -101,12 +102,17 @@ body {
 
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-/* Add padding to containers */
 .container {
-  padding: 16px;
-  background-color: white;
+  position: relative;
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 20px 20px 50px 50px;
+    width: 40%;
+    margin: 0 auto;
 }
 
 /* Full-width input fields */
@@ -132,13 +138,13 @@ hr {
 
 /* Set a style for the submit button */
 .registerbtn {
-  background-color: #4CAF50;
+  background-color: #043a81c9;
   color: white;
   padding: 16px 20px;
-  margin: 8px 0;
+  margin: 8px 120px;
   border: none;
   cursor: pointer;
-  width: 100%;
+  width: 50%;
   opacity: 0.9;
 }
 
@@ -161,16 +167,14 @@ a {
 
 <body>
 
-<header>
+<!-- <header>
   <h2>Safe Chat</h2>
-</header>
-
+</header> -->
+<br>
 <form action="/register" method="post">
   {% csrf_token %}
   <div class="container">
-    <h1>Register</h1>
-    <br>
-    <p>Please fill in this form to create an account.</p>
+    <h1 style="text-align:center">Create an account</h1>
     <br>
     <hr>
 
@@ -187,15 +191,24 @@ a {
 
     <label class="labelPart" for="psw-repeat"><b>Repeat Password</b></label>
     <input class="fieldPart" type="password" placeholder="Repeat Password" name="psw-repeat" id="psw-repeat" required>
-    <hr>
-    <p>By creating an account you agree to our <a href="#">Terms & Privacy</a>.</p>
-    <!-- <a href="/" class="registerbtn">Register</a> -->
+
+    <label class="labelPart" for="mob.no"><b>Mobile Number</b></label>
+    <input class="fieldPart" type="text" placeholder="Enter mobile number " name="mob.no" id="mob.no" required>
+    
+    <label class="labelPart" for="profile-pic"><b>Profile Picture</b></label><br>
+    <form method = "POST" class="post-form" enctype="multipart/form-data">
+      {% csrf_token %} 
+      {{ form.as_p }} 
+      <input type="file" id="myFile" name="filename">
+      <!-- <input type="submit"> -->
+    </form><br>
     <button type="submit" class="registerbtn">Register</button>
+    <p style="text-align:center">Already have an account? <a href="/">Sign in</a>.</p>
   </div>
   
-  <div class="container signin">
+  <!-- <div class="container signin">
     <p>Already have an account? <a href="/">Sign in</a>.</p>
-  </div>
+  </div> -->
 </form>
 
 </body>
