@@ -5,8 +5,23 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
 body {
-  margin: 0;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color:  #4f6e8b96;
+}
+    
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+    
+.container {
+    position: relative;
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 20px 20px 50px 50px;
+    width: 40%;
+    margin: 0 auto;
 }
 
 .topnav {
@@ -53,37 +68,6 @@ header {
   display: none;
 }
 
-#markList {
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-#markList td, #markList th {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-#markList tr:nth-child(even){background-color: #f2f2f2;}
-
-#markList tr:hover {background-color: #ddd;}
-
-#markList th {
-  padding-top: 12px;
-  padding-bottom: 12px;
-  background-color: #4CAF50;
-  color: white;
-}
-
-.tableContainer {
-  width: 60%;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.tableContainer th {
-  text-align: center;
-}
 
 @media screen and (max-width: 600px) {
   .topnav a:not(:first-child) {display: none;}
@@ -117,32 +101,16 @@ header {
 
 <div class="topnav" id="myTopnav">
   <a href="/homePage" class="active">Home</a>
-  <a href="/profile" class="active">Profile</a>
   <a style="float: right" href="/logout">Logout</a>
   <a style="float: right" href="/choose_room">Choose room</a>
-  <a style="float: right">Welcome to Safe Chat, {{currUser.name}}</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
 </div>
 
-<div class="col-md-4">
-  <h2>Other People</h2>
-  {% for chatUsers in users %}
-    <a href="{% url 'real_chat:profile_with_pk' pk=chatUsers.pk %}">
-      <h3>{{ chatUsers.name }}</h3>
-    </a>
-  {% endfor %}
-<script>
-function myFunction() {
-  var x = document.getElementById("myTopnav");
-  if (x.className === "topnav") {
-    x.className += " responsive";
-  } else {
-    x.className = "topnav";
-  }
-}
-</script>
-
-</body>
-</html>
+<div class="container">
+    <h1>User Profile</h1>
+    <p>Username: {{ currUser.name }}</p>
+    <p>Email: {{ currUser.email }}</p>
+    <p>Mobile Number: {{ currUser.mobile_number }}</p>
+</div>

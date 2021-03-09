@@ -15,6 +15,7 @@ Including another URLconf
 """
 #from django.contrib import admin
 from django.urls import path
+from django.conf.urls import url
 # from django.contrib.auth.views import LoginView
 # from django.contrib.auth import views as auth_views
 from . import views
@@ -25,11 +26,16 @@ urlpatterns = [
     path('', views.index, name = 'index'),
     path('indexPage', views.indexPage, name = 'indexpage'),
     path('login',views.login,name='login'),
-    #path('base', views.base, name = 'base'),
-    #path('<str:room_name>/', views.room, name = 'room'),
+    #path('user/<str:name>/',views.login,name='login'),
+    path('profile', views.profilePage, name = 'profile'),
+    path('profile/<int:pk>', views.profilePage, name = 'profile_with_pk'),
+    path('choose_room', views.choose_room, name = 'choose_room'),
+    path('chat/<str:room_name>/', views.room, name = 'room'),
     path('register', views.register, name = 'register'),
+    # url(r'^/(?P<name>\w+)/$', views.login, name='login'),
     path('homePage', views.homePage, name='home'),
     path('signupPage/', views.signupPage, name = 'signup'),
-    path('password_reset', views.password_reset, name = 'reset_password')
-    #path('logout', views.logout, name = 'logout'),
+    path('password_reset', views.password_reset, name = 'reset_password'),
+    path('reset_page', views.reset_page, name = 'reset_password'),
+    path('logout', views.logout, name = ''),
 ]

@@ -2,8 +2,9 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect 
 from .forms import *
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
-from real_chat.models import chat
+from real_chat.models import user
 import json
 import datetime
 from django.core.exceptions import ObjectDoesNotExist
@@ -15,23 +16,26 @@ def index(request):
 def indexPage(request):
     return render(request, 'index.html')   
 
-# def room(request, room_name):
-#     return render(request, 'room.html', {
-#         #'room_name': room_name
-#         'room_name_json': mark_safe(json.dumps(room_name))
-#     })
+def room(request, room_name):
+    print("inside room")
+    return render(request, 'room.html', {
+        'room_name': room_name,
+        'room_name_json': mark_safe(json.dumps(room_name))
+    })
 
 def login(request):
     username = request.POST.get('username')
     password = request.POST.get('password')
     chatUser = {}
-    chatUser = chat.objects.get(name=username)
+    chatUser = user.objects.get(name=username)
+    print(chatUser.name)
+    users = user.objects.exclude(id=chatUser.id)
     print('db',chatUser.password)
     pw = check_password(password,chatUser.password)
     print(pw)    
     if pw:
         print('hello')
-        response = render(request, 'home.html', {'currUser' : chatUser}) 
+        response = render(request, 'home.html', {'currUser' : chatUser, 'users':users}) 
         response.set_cookie('last_connection', datetime.datetime.now())
         response.set_cookie('username', chatUser.name)
         return response
@@ -40,8 +44,20 @@ def login(request):
 
 def homePage(request):
     username = request.COOKIES['username']
-    chatUser = chat.objects.get(name=username)
-    return render(request, 'home.html', {'currUser': chatUser})
+    chatUser = user.objects.get(name=username)
+    users = user.objects.exclude(id=chatUser.id)
+    return render(request, 'home.html', {'currUser': chatUser, 'users':users})
+
+def profilePage(request, pk=None):
+    users = user.objects.all()    
+    username = request.COOKIES['username']
+    chatUser = user.objects.get(name=username)
+    if pk:
+        chatUser = user.objects.get(pk=pk)
+        #print("##",chatUser.name)
+    else:
+        chatUsers = request.user
+    return render(request, 'profile.html', {'currUser':chatUser, 'users':users})
 
 def signupPage(request):
     return render(request, 'register.html')   
@@ -54,10 +70,11 @@ def register(request):
     re_password = request.POST.get('psw-repeat')
     mob_number = request.POST.get('mob.no')
     prof_pic = request.POST.get('prof-pic')
+    print(prof_pic)
     #print('register',name,email)
     pswrd = make_password(password)
     if(password == re_password):
-        db = chat(name=name, email=email, password=pswrd, mobile_number=mob_number, profile_pic=prof_pic)
+        db = user(name=name, email=email, password=pswrd, mobile_number=mob_number, profile_pic=prof_pic)
         db.save()
         return redirect('/indexPage')
     if request.method == 'POST': 
@@ -69,11 +86,26 @@ def register(request):
         form = chatForm() 
         return render(request, 'register.html', {'form' : db})    
 
+def choose_room(request):
+    return render(request, 'choose_room.html')
+
 def pic_uploaded(request): 
     return HttpResponse('successfully uploaded')
 
-def password_reset(request):
+def reset_page(request):
     return render(request, 'password_reset.html')
+
+def password_reset(request):
+    name = request.POST.get('username')
+    password = request.POST.get('psw')
+    re_password = request.POST.get('psw-repeat')
+    pswrd = make_password(password)
+    if(password == re_password):
+        print('inside')
+        db = user.objects.get(name = name, password = password)
+        db.save()
+        return redirect('/indexPage')
+    #return render(request, 'password_reset.html')
 
 # def account(request, *args, **kwargs):
 #     """
@@ -117,5 +149,5 @@ def password_reset(request):
 # def login(request):
 #     return render(request, 'login.html')
 
-# def logout(request):
-#     return render(request, "logout.html")    
+def logout(request):
+    return redirect('/indexPage')    
