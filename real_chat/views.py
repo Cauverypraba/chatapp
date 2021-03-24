@@ -3,8 +3,13 @@ from django.shortcuts import render, redirect
 from .forms import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.http.response import JsonResponse, HttpResponse
+from django.db.models import Min, Count
 from django.utils.safestring import mark_safe
-from real_chat.models import user
+from real_chat.models import user, FriendList, Message
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.parsers import JSONParser
+from real_chat.serializers import MessageSerializer, UserSerializer
 import json
 import datetime
 from django.core.exceptions import ObjectDoesNotExist
@@ -24,21 +29,31 @@ def room(request, room_name):
     })
 
 def login(request):
+    friends = []
     username = request.POST.get('username')
     password = request.POST.get('password')
-    chatUser = {}
     chatUser = user.objects.get(name=username)
-    print(chatUser.name)
+    print('inside login view',chatUser.name)
     users = user.objects.exclude(id=chatUser.id)
-    print('db',chatUser.password)
+    # print('user',users)
+    try:
+       friend = FriendList.objects.get(current_user=chatUser)
+       print('inside')
+    #    print('###',users,'###')
+       friends = friend.users.all()
+    #    users = user.objects.exclude(id=friends.id)
+    except:
+        friends = FriendList.objects.none()
+    #print('frnds',friends)
     pw = check_password(password,chatUser.password)
     print(pw)    
     if pw:
-        print('hello')
-        response = render(request, 'home.html', {'currUser' : chatUser, 'users':users}) 
+        response = render(request, 'home.html', {'currUser' : chatUser, 'users':users, 'friends': friends}) 
         response.set_cookie('last_connection', datetime.datetime.now())
         response.set_cookie('username', chatUser.name)
+        print('inside login')
         return response
+        # return redirect('chat/')
     return redirect('signupPage/')
 
 
@@ -46,7 +61,15 @@ def homePage(request):
     username = request.COOKIES['username']
     chatUser = user.objects.get(name=username)
     users = user.objects.exclude(id=chatUser.id)
-    return render(request, 'home.html', {'currUser': chatUser, 'users':users})
+    print(chatUser.name)
+    friend = FriendList.objects.get(current_user=chatUser)
+    print(friend)
+    try:
+       friend = FriendList.objects.get(current_user=chatUser)
+       friends = friend.users.all()
+    except:
+        friends = FriendList.objects.none()
+    return render(request, 'home.html', {'currUser': chatUser, 'users':users, 'friends': friends})
 
 def profilePage(request, pk=None):
     users = user.objects.all()    
@@ -77,14 +100,85 @@ def register(request):
         db = user(name=name, email=email, password=pswrd, mobile_number=mob_number, profile_pic=prof_pic)
         db.save()
         return redirect('/indexPage')
-    if request.method == 'POST': 
-        db = chatForm(request.POST, request.FILES) 
-        if db.is_valid(): 
-            db.save() 
-            return redirect('success') 
-    else: 
-        form = chatForm() 
-        return render(request, 'register.html', {'form' : db})    
+    # if request.method == 'POST': 
+    #     db = chatForm(request.POST, request.FILES) 
+    #     if db.is_valid(): 
+    #         db.save() 
+    #         return redirect('success') 
+    # else: 
+    #     form = chatForm() 
+    #     return render(request, 'register.html', {'form' : db})    
+
+def change_friends(request, operation, pk):
+    friend = user.objects.get(pk=pk)
+    username = request.COOKIES['username']
+    chatUser = user.objects.get(name=username)
+    if operation == 'add':
+        FriendList.make_friend(chatUser, friend)
+    elif operation == 'remove':
+        FriendList.lose_friend(chatUser, friend)   
+    return redirect('/homePage')
+
+def chat(request):
+    print('inside chat')
+    username = request.COOKIES['username']
+    chatUser = user.objects.get(name=username)
+    users = user.objects.exclude(id=chatUser.id)
+    friend = FriendList.objects.get(current_user=chatUser)
+    print(friend)
+    try:
+       friend = FriendList.objects.get(current_user=chatUser)
+       friends = friend.users.all()
+    except:
+        friends = FriendList.objects.none()
+    return render(request, 'chat.html', {'currUser': chatUser, 'users':users, 'friends': friends})
+
+@csrf_exempt
+def message_list(request, sender=None, receiver=None):
+    """
+    List all required messages, or create a new message.
+    """
+    if request.method == 'GET':
+        messages = Message.objects.filter(sender_id=sender, receiver_id=receiver, is_read=False)
+        serializer = MessageSerializer(messages, many=True, context={'request': request})
+        for message in messages:
+            message.is_read = True
+            message.save()
+        return JsonResponse(serializer.data, safe=False)
+
+    elif request.method == 'POST':
+        data = JSONParser().parse(request)
+        print(data)
+        serializer = MessageSerializer(data=data)
+        if serializer.is_valid():
+            print('inside message list')
+            serializer.save()
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
+
+def message_view(request, sender, receiver):
+    if request.method == "GET":
+        username = request.COOKIES['username']
+        chatUser = user.objects.get(name=username)
+        print(chatUser.id)
+        users = user.objects.exclude(id=chatUser.id)
+        print(users)
+        print('inside message', sender, receiver)
+        try:
+            messages1 = Message.objects.filter(sender_id=sender, receiver_id=receiver)
+            messages2 = Message.objects.filter(sender_id=receiver, receiver_id=sender)
+            # receiver = user.objects.get(name=receiver)
+        except:
+            receiver = Message.objects.none()
+        return render(request, "messages.html",
+                      {'users': users, 'currUser': chatUser,
+                       'receiver': receiver,
+                       'messages': messages1 | messages2})
+        # return render(request, "messages.html",
+        #               {'users': users, 'currUser': chatUser,
+        #                'receiver': receiver,
+        #                'messages': Message.objects.filter(sender_id=sender, receiver_id=receiver) |
+        #                            Message.objects.filter(sender_id=receiver, receiver_id=sender)})
 
 def choose_room(request):
     return render(request, 'choose_room.html')

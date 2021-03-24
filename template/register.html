@@ -171,7 +171,7 @@ a {
   <h2>Safe Chat</h2>
 </header> -->
 <br>
-<form action="/register" method="post">
+<form action="/register" method="post" enctype="multipart/form-data">
   {% csrf_token %}
   <div class="container">
     <h1 style="text-align:center">Create an account</h1>
@@ -195,11 +195,8 @@ a {
     <label class="labelPart" for="mob.no"><b>Mobile Number</b></label>
     <input class="fieldPart" type="text" placeholder="Enter mobile number " name="mob.no" id="mob.no" required>
     
-    <label class="labelPart" for="profile-pic"><b>Profile Picture</b></label><br>
-    <form method = "POST" class="post-form" enctype="multipart/form-data">
-      {% csrf_token %} 
-      {{ form.as_p }} 
-      <input type="file" id="myFile" name="filename">
+    <label class="labelPart" for="prof-pic"><b>Profile Picture</b></label><br> 
+      <input type="file" id="prof-pic" name="prof-pic">
       <!-- <input type="submit"> -->
     </form><br>
     <button type="submit" class="registerbtn">Register</button>

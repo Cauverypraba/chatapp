@@ -9,20 +9,21 @@
     <input id="chat-message-input" type="text" size="100"><br>
     <input id="chat-message-submit" type="button" value="Send">
 </body>    
-    <!-- {{ room_name|json_script:"room-name" }} -->
 <script>
-    const roomName = JSON.parse(document.getElementById('room-name').textContent);
+    var roomName = {{room_name_json}};
 
-    const chatSocket = new WebSocket(
-        'ws://'
-        + window.location.host
-        + '/ws/chat/'
-        + roomName
-        + '/'
+    var chatSocket = new WebSocket(
+        'wss://'+ window.location.host+ '/ws/chat/'+ roomName
     );
 
+    
+    chatSocket.onopen = function(e) {
+        console.log("WebSocket is open now.");
+      };
+
     chatSocket.onmessage = function(e) {
-        const data = JSON.parse(e.data);
+        var data = JSON.parse(e.data);
+        console.log(data);
         document.querySelector('#chat-log').value += (data.message + '\n');
     };
 
@@ -38,11 +39,13 @@
     };
 
     document.querySelector('#chat-message-submit').onclick = function(e) {
-        const messageInputDom = document.querySelector('#chat-message-input');
-        const message = messageInputDom.value;
-        chatSocket.send(JSON.stringify({
-            'message': message
-        }));
+        var messageInputDom = document.querySelector('#chat-message-input');
+        var message = messageInputDom.value;
+        chatSocket.onmessage = function(e) {
+            chatSocket.send(JSON.stringify({
+                'message' : message
+            }));
+        };
         messageInputDom.value = '';
     };
 </script>

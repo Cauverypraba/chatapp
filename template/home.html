@@ -118,6 +118,7 @@ header {
 <div class="topnav" id="myTopnav">
   <a href="/homePage" class="active">Home</a>
   <a href="/profile" class="active">Profile</a>
+  <a href="/chat" class="active">Chat</a>
   <a style="float: right" href="/logout">Logout</a>
   <a style="float: right" href="/choose_room">Choose room</a>
   <a style="float: right">Welcome to Safe Chat, {{currUser.name}}</a>
@@ -127,10 +128,24 @@ header {
 </div>
 
 <div class="col-md-4">
-  <h2>Other People</h2>
+  <h2>Friends</h2>
+  {% for friend in friends %}
+    <a href="{% url 'real_chat:profile_with_pk' pk=friend.pk %}">
+      <h3>{{ friend.name }}</h3>
+    </a>
+    <a href="{% url 'real_chat:change_friends' operation='remove' pk=friend.pk %}">
+      <button type="button" class="btn btn-default">Remove Friend</button>
+    </a>
+  {% endfor %}
+
+<div class="col-md-4">
+  <h2>Other Users</h2>
   {% for chatUsers in users %}
     <a href="{% url 'real_chat:profile_with_pk' pk=chatUsers.pk %}">
       <h3>{{ chatUsers.name }}</h3>
+    </a>
+    <a href="{% url 'real_chat:change_friends' operation='add' pk=chatUsers.pk %}">
+      <button type="button" class="btn btn-default">Add Friend</button>
     </a>
   {% endfor %}
 <script>

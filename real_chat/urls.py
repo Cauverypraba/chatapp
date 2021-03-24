@@ -16,8 +16,7 @@ Including another URLconf
 #from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url
-# from django.contrib.auth.views import LoginView
-# from django.contrib.auth import views as auth_views
+from django.contrib.auth import views as auth_views
 from . import views
 
 app_name = 'real_chat'
@@ -29,6 +28,11 @@ urlpatterns = [
     #path('user/<str:name>/',views.login,name='login'),
     path('profile', views.profilePage, name = 'profile'),
     path('profile/<int:pk>', views.profilePage, name = 'profile_with_pk'),
+    path('home/connect/<str:operation>/<int:pk>', views.change_friends, name = 'change_friends'),
+    path('chat/', views.chat, name = 'chats'),
+    path('chat/<int:sender>/<int:receiver>/', views.message_view, name='chat'),
+    path('api/messages/<int:sender>/<int:receiver>/', views.message_list, name='message-detail'),
+    path('api/messages/', views.message_list, name='message-list'),
     path('choose_room', views.choose_room, name = 'choose_room'),
     path('chat/<str:room_name>/', views.room, name = 'room'),
     path('register', views.register, name = 'register'),
@@ -37,5 +41,6 @@ urlpatterns = [
     path('signupPage/', views.signupPage, name = 'signup'),
     path('password_reset', views.password_reset, name = 'reset_password'),
     path('reset_page', views.reset_page, name = 'reset_password'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('logout', views.logout, name = ''),
 ]
