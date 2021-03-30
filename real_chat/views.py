@@ -148,12 +148,15 @@ def message_list(request, sender=None, receiver=None):
 
     elif request.method == 'POST':
         data = JSONParser().parse(request)
-        print(data)
         serializer = MessageSerializer(data=data)
+        print(data)
         if serializer.is_valid():
             print('inside message list')
             serializer.save()
+            print(serializer.data)
             return JsonResponse(serializer.data, status=201)
+        # else:
+        #     print('##error',serializer.errors)
         return JsonResponse(serializer.errors, status=400)
 
 def message_view(request, sender, receiver):
@@ -163,17 +166,24 @@ def message_view(request, sender, receiver):
         print(chatUser.id)
         users = user.objects.exclude(id=chatUser.id)
         print(users)
+        sender_obj = user.objects.get(id=sender)
+        receiver_obj = user.objects.get(id=receiver)
+        print(sender_obj.name, receiver_obj.name)
+        friend = FriendList.objects.get(current_user=chatUser)
         print('inside message', sender, receiver)
         try:
             messages1 = Message.objects.filter(sender_id=sender, receiver_id=receiver)
             messages2 = Message.objects.filter(sender_id=receiver, receiver_id=sender)
+            friend = FriendList.objects.get(current_user=chatUser)
+            friends = friend.users.all()
             # receiver = user.objects.get(name=receiver)
         except:
             receiver = Message.objects.none()
+            friends = FriendList.objects.none()
         return render(request, "messages.html",
                       {'users': users, 'currUser': chatUser,
-                       'receiver': receiver,
-                       'messages': messages1 | messages2})
+                       'messages': messages1 | messages2, 'friends' : friends, 'sender_obj':sender_obj, 
+                       'receiver_obj': receiver_obj})
         # return render(request, "messages.html",
         #               {'users': users, 'currUser': chatUser,
         #                'receiver': receiver,

@@ -19,16 +19,22 @@
 
 
 {% block body %}
-<nav class="blue lighten-3">
-    <div class="nav-wrapper container">
-      <a href="{% url 'real_chat:home' %}">Home</a>
-      <a href="#" class="brand-logo">Safe Chat</a>
+<nav class="nav-color lighten-3">
+    <div class="nav-wrapper container" style="padding: 5px">
+      <a style="float: left" href="{% url 'real_chat:home' %}"><h5>Home</h5></a>
+      <!-- <a href="#" class="brand-logo">Safe Chat</a> -->
       <ul id="nav-mobile" class="right hide-on-med-and-down">
-          <li><a href="{% url 'real_chat:profile_with_pk' pk=currUser.pk %}">{{ currUser.name }}</a></li>
+          <li style="padding: 5px"><a href="{% url 'real_chat:profile_with_pk' pk=currUser.pk %}"><h5>{{ currUser.name }}</h5></a></li>
           <li><a href="{% url 'real_chat:logout' %}"><i class="material-icons">power_settings_new</i></a></li>
       </ul>
     </div>
 </nav>
+<!-- <div class="nav-wrapper container">
+    <ul id="nav-mobile" class="hide-on-med-and-down">
+        <li float="left"><h4>{{ receiver_obj.name }}</h4></li>
+    </ul>
+</div> -->
+
     <div class="section" style="height: 80vh">
     <div class="row">
         <div class="col s3">
@@ -36,7 +42,8 @@
             <div class="collection">
                 {% for friend in friends %}
                 <a href="{% url 'real_chat:chat' currUser.id friend.id  %}" class="collection-item row">
-                    <img src="https://frontend-1.adjust.com/new-assets/images/site-images/interface/user.svg" class="col s4">
+                    <!-- <img src="https://frontend-1.adjust.com/new-assets/images/site-images/interface/user.svg" class="col s4"> -->
+                    <div class="col s4"><i class="friend-icon">{{ friend.name.0 }}</i></div>
                     <div class="col s8">
                     <span class="title" style="font-weight: bolder">{{ friend.name }}</span>
                     </div>
@@ -46,6 +53,16 @@
         </div>
         </div>
         <div class="col s9">
+            <div class="receiver-container">
+                {% if receiver_obj %}
+                <ul id="receiver">
+                    <li>
+                        <i class="friend-icon" style="margin-top: -5px;">{{ receiver_obj.name.0 }}</i>
+                        <h5 style="font-weight: bold; display: inline-block;">{{ receiver_obj.name }}</h5>
+                    </li>
+                </ul>
+                {% endif %}    
+            </div>
             <div class="card">
             <div id="board" class="section grey lighten-3" style="height: 68vh; padding: 5px; overflow-y: scroll">
                 {% block messages %}
@@ -73,8 +90,8 @@
     <script src="{% static 'js/chat.js' %}"></script>
     <script>
         // For receiving
-        sender_id = "{{ receiver }}";
-        receiver_id = "{{ currUser.id }}";
+        sender_id = "{{ receiver_obj.id }}";
+        receiver_id = "{{ sender_obj.id }}";
 
         //For sending
         $(function () {
@@ -82,7 +99,7 @@
             $('#chat-box').on('submit', function (event) {
                 event.preventDefault();
                 var message = $('#id_message');
-                send('{{ currUser.name }}', '{{ receiver.username }}', message.val());
+                send('{{ sender_obj.name }}', '{{ receiver_obj.name }}', message.val());
                 message.val('');
             })
         })

@@ -4,11 +4,13 @@ from real_chat.models import user, FriendList, Message
 
 
 class UserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
+    name = serializers.CharField(max_length=100, required=True)
+    password = serializers.CharField(max_length=200, required=True)
+    profile_pic = serializers.ImageField(required=False)
 
     class Meta:
         model = user
-        fields = ['name', 'password', 'email', 'mobile_number', 'profile_pic', 'created_date']
+        fields = ['name', 'password', 'email', 'mobile_number', 'created_date']
 
 
 class MessageSerializer(serializers.ModelSerializer):

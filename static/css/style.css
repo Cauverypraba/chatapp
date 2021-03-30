@@ -12,3 +12,19 @@
     border-bottom: 1px solid #000; !important;
     box-shadow: 0 1px 0 0 #000; !important;
 }
+
+.nav-color {
+    background-color: cadetblue;
+    color: white;
+}
+
+.active {
+    background-color: rgb(38, 137, 184);
+}
+
+.friend-icon {
+    background-color: rgb(88, 137, 209);
+    color: white;
+    border-radius: 50%;
+    padding: 5px 10px;
+}

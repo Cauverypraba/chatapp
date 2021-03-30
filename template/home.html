@@ -17,7 +17,7 @@ body {
 * {
   box-sizing: border-box;
   margin: 0;
-  padding: 0;
+  padding: 0
 }
 
 body {
@@ -25,7 +25,7 @@ body {
 }
 
 header {
-  background-color: #043a81c9;
+  background-color: cadetblue;
   padding: 20px;
   color: white;
 }
@@ -51,6 +51,32 @@ header {
 
 .topnav .icon {
   display: none;
+}
+
+.container {
+    position: absolute;
+    right: 60%;
+    top: 30%;
+    border-radius: 5px;
+    background-color: #dac2c2;
+    padding: 10px 10px 20px 20px;
+    width: 30%;
+    margin: 0 auto;
+}
+
+.container h2 {
+  margin-bottom: 15px;
+}
+
+.container2 {
+  position: absolute;
+  left: 50%;
+  top: 20%;
+  border-radius: 5px;
+  background-color: rgb(182, 218, 218);
+  padding: 20px 20px 50px 50px;
+  width: 30%;
+  margin: 0 auto;
 }
 
 #markList {
@@ -112,7 +138,7 @@ header {
 <body>
  
 <header>
-  <h2>Safe Chat</h2>
+  <h2>JusChat</h2>
 </header> 
 
 <div class="topnav" id="myTopnav">
@@ -121,13 +147,13 @@ header {
   <a href="/chat" class="active">Chat</a>
   <a style="float: right" href="/logout">Logout</a>
   <a style="float: right" href="/choose_room">Choose room</a>
-  <a style="float: right">Welcome to Safe Chat, {{currUser.name}}</a>
+  <a style="float: right">Welcome to JusChat, {{currUser.name}}</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
 </div>
 
-<div class="col-md-4">
+<div class="container">
   <h2>Friends</h2>
   {% for friend in friends %}
     <a href="{% url 'real_chat:profile_with_pk' pk=friend.pk %}">
@@ -137,8 +163,8 @@ header {
       <button type="button" class="btn btn-default">Remove Friend</button>
     </a>
   {% endfor %}
-
-<div class="col-md-4">
+</div>
+<div class="container2">
   <h2>Other Users</h2>
   {% for chatUsers in users %}
     <a href="{% url 'real_chat:profile_with_pk' pk=chatUsers.pk %}">
@@ -148,6 +174,7 @@ header {
       <button type="button" class="btn btn-default">Add Friend</button>
     </a>
   {% endfor %}
+</div>  
 <script>
 function myFunction() {
   var x = document.getElementById("myTopnav");

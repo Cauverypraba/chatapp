@@ -10,6 +10,7 @@ function scrolltoend() {
 }
 
 function send(sender, receiver, message) {
+    console.log('inside send',sender, receiver)
     $.post('/api/messages/', '{"sender": "'+ sender +'", "receiver": "'+ receiver +'","message": "'+ message +'" }', function (data) {
         console.log(data);
         var box = text_box.replace('{sender}', "You");
@@ -21,7 +22,7 @@ function send(sender, receiver, message) {
 
 function receive() {
     $.get('/api/messages/'+ sender_id + '/' + receiver_id, function (data) {
-        console.log(data);
+        console.log('inside receive',data);
         if (data.length !== 0)
         {
             for(var i=0;i<data.length;i++) {
