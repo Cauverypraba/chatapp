@@ -16,7 +16,7 @@ class user(models.Model):
 
 class FriendList(models.Model):
     users = models.ManyToManyField(user)
-    current_user = models.ForeignKey(user, related_name='current_user', null=True, on_delete=models.DO_NOTHING)
+    current_user = models.ForeignKey(user, related_name='current_user', null=True, on_delete=models.CASCADE)
 
     @classmethod
     def make_friend(cls, current_user, new_friend):

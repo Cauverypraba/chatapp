@@ -53,7 +53,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'chatapp.urls'
-ASGI_APPLICATION ='chatapp.asgi.application'
+ASGI_APPLICATION ='chatapp.routing.application'
 
 TEMPLATES = [
     {

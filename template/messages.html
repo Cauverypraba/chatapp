@@ -11,18 +11,118 @@
 {% block messages %}
     {% for message in messages %}
     {% if message.sender.name == currUser.name %}
-<div class="card-panel right" style="width: 75%; position: relative">
+<div class="card-panel right your-msg" style="width: 60%; position: relative">
     <div style="position: absolute; top: 0; left:3px; font-weight: bolder" class="title">You</div>
-    {{ message }}
+    <span id="{{message.id}}">{{ message }}</span>
+    <div class="tool-bar">
+        <span onclick="editMsg(event)"><i class="fa fa-edit"></i></span>
+        <span onclick="deleteMsg(event)"><i class="fa fa-trash"></i></span>
+    </div>
+    <input type="text" id="edited-msg" name="edited-msg" hidden value="{{message}}">
+    <input type="text" id="deleted-msg" name="deleted-msg" hidden value="{{message}}">
+
+    <!-- <span id="{{message.id}}">{{ message }}</span> -->
+    <!-- <div class="tool-bar">
+        <span onclick="deleteMsg(event)"><i class="fa fa-trash"></i></span>
+        <span><i class="fa fa-trash"></i></span>
+    </div> -->
+    <!-- <form>
+        {% csrf_token %}
+        <input type="text" id="edited-msg" name="edited-msg" hidden value="{{message}}">
+    </form> -->
 </div>
     {% else %}
-<div class="card-panel left blue lighten-5" style="width: 75%; position: relative">
+<div class="card-panel left blue lighten-5 friend-msg" style="width: 60%; position: relative">
     <div style="position: absolute; top: 0; left:3px; font-weight: bolder" class="title">{{ message.sender.name }}</div>
     {{ message }}
+    <div class="tool-bar">
+        <span><i class="fa fa-edit"></i></span>
+        <span><i class="fa fa-trash"></i></span>
+    </div>
 </div>
     {% endif %}
     {% endfor %}
 <script>
+
+function editMsg(event, id) {
+    let toolBar = event.target.parentNode.parentNode;
+    let msg = toolBar.parentNode.children[1];
+    msg.hidden = true;
+    let editField = toolBar.parentNode.lastElementChild;
+    editField.hidden = false;
+    editField.addEventListener('keypress', function(event) {
+        let editedText = event.target.value;
+        if(event.keyCode === 13) {
+            console.log(editedText);
+            /*$.post('/api/messages/update/', '{"csrfmiddlewaretoken":"'+"{{csrf_token }}"+'","id": "'+ msg.id +'","message": "'+ editedText +'" }', function (data) {
+                console.log('hii',data);
+            })*/
+
+            $.ajax({
+                method:'POST',
+                url:'/api/messages/update/'+sender_id+'/'+ receiver_id+'/',
+                headers: {'X-CSRFToken': '{{csrf_token}}'},
+                data : { "id" : msg.id, "message": editedText},
+                success: function(e){
+                    alert("Message was edited");          
+                 },  
+                 error: function(e){
+                    alert("error")
+                 }
+            });
+
+            editField.hidden = true;
+            msg.hidden = false;
+        }
+    })
+
+}   
+
+function deleteMsg(event, id) {
+    let toolBar = event.target.parentNode.parentNode;
+    let msg = toolBar.parentNode.children[1];
+    console.log(msg)
+    $.ajax({
+        method:'POST',
+        url:'/api/messages/delete/',
+        headers: {'X-CSRFToken': '{{csrf_token}}'},
+        data : { "id" : msg.id},
+    });
+}
+
+function deleteMsg2(event, id) {
+    let toolBar = event.target.parentNode.parentNode;
+    let msg = toolBar.parentNode.children[1];
+    msg.hidden = true;
+    let deleteField = toolBar.parentNode.lastElementChild;
+    deleteField.hidden = false;
+    deleteField.addEventListener('keypress', function(event) {
+        let deletedText = event.target.value;
+        if(event.keyCode === 13) {
+            /*$.post('/api/messages/update/', '{"csrfmiddlewaretoken":"'+"{{csrf_token }}"+'","id": "'+ msg.id +'","message": "'+ editedText +'" }', function (data) {
+                console.log('hii',data);
+            })*/
+            
+            /* $.ajax({
+                method:'POST',
+                url:'/api/messages/delete/',
+                headers: {'X-CSRFToken': '{{csrf_token}}'},
+                data : { "id" : msg.id, "message": deletedText},
+                success: function(e){
+                    alert("Message was edited");          
+                 },  
+                 error: function(e){
+                    alert("error")
+                 }
+            }); */
+
+            deleteField.hidden = true;
+            msg.hidden = false;
+        }
+    })
+
+}
+
 $(function () {
     $('#user{{ receiver.id }}').addClass('active');
     //Call receive function each 1 seconds to check for new messages in the database

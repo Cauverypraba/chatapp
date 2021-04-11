@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,6 +7,8 @@
 <style>
 body {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
@@ -58,10 +61,15 @@ header {
     right: 60%;
     top: 30%;
     border-radius: 5px;
-    background-color: #dac2c2;
-    padding: 10px 10px 20px 20px;
+    /* background-color: #dac2c2; */
+    border-color: lightgray;
+    padding: 20px 20px 20px 20px;
     width: 30%;
     margin: 0 auto;
+    border: 3px solid black;
+    border-radius: 5px;
+    margin-top: 15px;
+    margin-bottom: 15px
 }
 
 .container h2 {
@@ -73,42 +81,15 @@ header {
   left: 50%;
   top: 20%;
   border-radius: 5px;
-  background-color: rgb(182, 218, 218);
-  padding: 20px 20px 50px 50px;
+  /*background-color: rgb(182, 218, 218);*/
+  border-color: lightgray;
+  padding: 30px 30px 50px 50px;
   width: 30%;
   margin: 0 auto;
-}
-
-#markList {
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-#markList td, #markList th {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-#markList tr:nth-child(even){background-color: #f2f2f2;}
-
-#markList tr:hover {background-color: #ddd;}
-
-#markList th {
-  padding-top: 12px;
-  padding-bottom: 12px;
-  background-color: #4CAF50;
-  color: white;
-}
-
-.tableContainer {
-  width: 60%;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.tableContainer th {
-  text-align: center;
+  border: 3px solid black;
+  border-radius: 5px;
+  margin-top: 15px;
+  margin-bottom: 15px
 }
 
 @media screen and (max-width: 600px) {
@@ -133,16 +114,69 @@ header {
   }
 }
 
+.container a, .container2 a {
+  text-decoration: none;
+  color: black;
+  display: inline-block;
+}
+
+.container h2, .container2 h2 {
+  background-color: cadetblue;
+}
+
+.friend, .user {
+  border-color: cadetblue;
+  display: block;
+  padding: 10px;
+  margin: 5px;
+  border-radius: 5px;
+}
+
+.friend:hover, .user:hover {
+  background-color: rgb(141, 180, 182);
+}
+
+.add-btn, .remove-btn {
+  border: 1px solid green;
+  padding: 5px;
+  border-radius: 50%;
+  float: right;
+}
+
+.container2 .add-btn, .container .remove-btn {
+  border-color: gray;
+  color: gray;
+}
+
+.container2 .add-btn:hover {
+  border-color: rgb(4, 61, 4);
+  color: green;
+  background-color: rgb(111, 240, 111);
+}
+
+.container .remove-btn:hover {
+  border-color: rgb(146, 68, 68);
+  color: red;
+  background-color: rgb(248, 129, 129);
+}
+
+/*header img {
+  float : left;
+  width: 100px;
+  padding: -50px;
+} */
+
 </style>
 </head>
 <body>
  
 <header>
+  <!-- <img src="{% static 'img/chatapp_logo.gif' %}"/> -->
   <h2>JusChat</h2>
 </header> 
 
 <div class="topnav" id="myTopnav">
-  <a href="/homePage" class="active">Home</a>
+  <a href="/homePage" class="active">Home</a> 
   <a href="/profile" class="active">Profile</a>
   <a href="/chat" class="active">Chat</a>
   <a style="float: right" href="/logout">Logout</a>
@@ -156,23 +190,29 @@ header {
 <div class="container">
   <h2>Friends</h2>
   {% for friend in friends %}
-    <a href="{% url 'real_chat:profile_with_pk' pk=friend.pk %}">
-      <h3>{{ friend.name }}</h3>
-    </a>
-    <a href="{% url 'real_chat:change_friends' operation='remove' pk=friend.pk %}">
-      <button type="button" class="btn btn-default">Remove Friend</button>
-    </a>
+    <div class="friend">
+      <a href="{% url 'real_chat:profile_with_pk' pk=friend.pk %}">
+        <h3>{{ friend.name }}</h3>
+      </a>
+      <a href="{% url 'real_chat:change_friends' operation='remove' pk=friend.pk %}" class="remove-btn">
+        <!-- <button type="button" class="btn btn-default">Remove Friend</button> -->
+        <i class="fa fa-trash"></i>
+      </a>
+    </div>
   {% endfor %}
 </div>
 <div class="container2">
-  <h2>Other Users</h2>
+  <h2>All Users</h2>
   {% for chatUsers in users %}
+  <div class="user">
     <a href="{% url 'real_chat:profile_with_pk' pk=chatUsers.pk %}">
       <h3>{{ chatUsers.name }}</h3>
     </a>
-    <a href="{% url 'real_chat:change_friends' operation='add' pk=chatUsers.pk %}">
-      <button type="button" class="btn btn-default">Add Friend</button>
+    <a href="{% url 'real_chat:change_friends' operation='add' pk=chatUsers.pk %}" class="add-btn">
+      <!-- <button type="button" class="btn btn-default">Add Friend</button> -->
+      <i class="fa fa-plus"></i>
     </a>
+  </div>
   {% endfor %}
 </div>  
 <script>

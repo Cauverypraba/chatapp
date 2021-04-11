@@ -38,13 +38,16 @@ def login(request):
     # print('user',users)
     try:
        friend = FriendList.objects.get(current_user=chatUser)
-       print('inside')
     #    print('###',users,'###')
        friends = friend.users.all()
-    #    users = user.objects.exclude(id=friends.id)
+       print('friends', friends)
+    #    users = user.objects.exclude(id=friends)
+       print('users', users)
     except:
         friends = FriendList.objects.none()
+    print(friend.id)    
     #print('frnds',friends)
+    # users = user.objects.exclude(id=friends.id)
     pw = check_password(password,chatUser.password)
     print(pw)    
     if pw:
@@ -109,6 +112,13 @@ def register(request):
     #     form = chatForm() 
     #     return render(request, 'register.html', {'form' : db})    
 
+def ShowchatHome(request):
+    return render(request, 'groupchat_home.html')
+
+def ShowchatPage(request, room_name, person_name):
+    return render(request, 'groupchat_screen.html',{'room_name': room_name, 'person_name': person_name})
+    #return HttpResponse("Chat Page"+room_name+""+person_name)    
+
 def change_friends(request, operation, pk):
     friend = user.objects.get(pk=pk)
     username = request.COOKIES['username']
@@ -170,13 +180,12 @@ def message_view(request, sender, receiver):
         receiver_obj = user.objects.get(id=receiver)
         print(sender_obj.name, receiver_obj.name)
         friend = FriendList.objects.get(current_user=chatUser)
-        print('inside message', sender, receiver)
+        # print('inside message', sender, receiver)
         try:
             messages1 = Message.objects.filter(sender_id=sender, receiver_id=receiver)
             messages2 = Message.objects.filter(sender_id=receiver, receiver_id=sender)
             friend = FriendList.objects.get(current_user=chatUser)
             friends = friend.users.all()
-            # receiver = user.objects.get(name=receiver)
         except:
             receiver = Message.objects.none()
             friends = FriendList.objects.none()
@@ -189,6 +198,48 @@ def message_view(request, sender, receiver):
         #                'receiver': receiver,
         #                'messages': Message.objects.filter(sender_id=sender, receiver_id=receiver) |
         #                            Message.objects.filter(sender_id=receiver, receiver_id=sender)})
+
+def updateMessage(request, sender, receiver):
+    print('inside update message')
+    pk = request.POST.get('id')
+    message = request.POST.get('message')
+    print(pk, message)
+    db = Message.objects.get(id=pk)
+    print(db)
+    db.message = message
+    db.save()
+    username = request.COOKIES['username']
+    chatUser = user.objects.get(name=username)
+    print(chatUser.id)
+    users = user.objects.exclude(id=chatUser.id)
+    print(users)
+    sender_obj = user.objects.get(id=sender)
+    receiver_obj = user.objects.get(id=receiver)
+    print(sender_obj.name, receiver_obj.name)
+    friend = FriendList.objects.get(current_user=chatUser)
+    # print('inside message', sender, receiver)
+    try:
+        messages1 = Message.objects.filter(sender_id=sender, receiver_id=receiver)
+        messages2 = Message.objects.filter(sender_id=receiver, receiver_id=sender)
+        friend = FriendList.objects.get(current_user=chatUser)
+        friends = friend.users.all()
+    except:
+        receiver = Message.objects.none()
+        friends = FriendList.objects.none()
+    return render(request, "messages.html",
+                      {'users': users, 'currUser': chatUser,
+                       'messages': messages1 | messages2, 'friends' : friends, 'sender_obj':sender_obj, 
+                       'receiver_obj': receiver_obj})
+
+def deleteMessage(request):
+    print('inside delete message')
+    pk = request.POST.get('id')
+    print(pk)
+    db = Message.objects.get(id=pk)
+    # print(db)
+    # msg = db.message
+    db.delete()
+    return render(request, 'messages.html')
 
 def choose_room(request):
     return render(request, 'choose_room.html')

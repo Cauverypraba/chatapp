@@ -23,8 +23,31 @@
 }
 
 .friend-icon {
-    background-color: rgb(88, 137, 209);
+    background-color: cadetblue;
     color: white;
     border-radius: 50%;
     padding: 5px 10px;
+}
+
+.your-msg:hover .tool-bar, .friend-msg:hover .tool-bar {
+    display: block;
+}
+
+.tool-bar {
+    display: none;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+.tool-bar span {
+    padding: 5px;
+    /* margin: 5px; */
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.tool-bar span:hover {
+    background-color: lightgray;
+    border: 1px solid lightgray
 }
