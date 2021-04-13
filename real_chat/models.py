@@ -30,7 +30,7 @@ class FriendList(models.Model):
         friend, created = cls.objects.get_or_create(
               current_user=current_user
         )
-        friend.users.remove(new_friend)
+        friend.users.remove(new_friend)    
 
 # class MessageQueryset(models.query.QuerySet):
 #     def active(self):
@@ -50,3 +50,14 @@ class Message(models.Model):
 
     class Meta:
         ordering = ('timestamp',)            
+
+class HiddenFriends(models.Model):
+    users = models.ManyToManyField(user)
+    current_user = models.ForeignKey(user, related_name='user', null=True, on_delete=models.CASCADE)
+
+    @classmethod
+    def hide_friend(cls, current_user, new_friend):
+        hidefrnd, created = cls.objects.get_or_create(
+              current_user=current_user
+        )
+        hidefrnd.users.add(new_friend)        

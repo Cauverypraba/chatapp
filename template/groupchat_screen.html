@@ -35,6 +35,7 @@
         document.querySelector("#send_message").onclick=function(e){
             var message=document.querySelector("#message").value;
             console.log("got message : " + message);
+            chatSocket.onmessage = (data) => console.log(data);
             chatSocket.onopen = () => chatSocket.send(JSON.stringify({
                 'message':message}));
             document.querySelector("#message").value=''

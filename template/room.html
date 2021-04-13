@@ -12,7 +12,7 @@
 <script>
     var roomName = {{ room_name_json }};
     var chatSocket = new WebSocket(
-        'ws://' + window.location.host +
+        'wss://' + window.location.host +
         '/ws/chat/' + roomName + '/');
 
     chatSocket.onmessage = function(e) {
@@ -37,9 +37,9 @@
         var messageInputDom = document.getElementById('chat-message-input');
         var message = messageInputDom.value;
         console.log("got message : " + message);
-        chatSocket.send(JSON.stringify({
-            'message': message
-        }));
+        chatSocket.onopen=() => chatSocket.send(JSON.stringify({
+                                    'message': message
+                                }));
         console.log("This was done?");
         messageInputDom.value = '';
     };
