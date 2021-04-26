@@ -1,5 +1,3 @@
-<!-- <h1>Helloo</h1>
-{{hidefrnd.name}} -->
 {% load static %}
   <!DOCTYPE html>
   <html>
@@ -28,6 +26,7 @@
       <!-- <a href="#" class="brand-logo">Safe Chat</a> -->
       <ul id="nav-mobile" class="right hide-on-med-and-down">
           <li style="padding: 5px"><a href="{% url 'real_chat:profile_with_pk' pk=currUser.pk %}"><h5>{{ currUser.name }}</h5></a></li>
+          <!-- <li style="padding: 5px"><a href="{% url 'real_chat:choose_room' %}"><h5>Choose Room</h5></a></li> -->
           <li><a href="{% url 'real_chat:logout' %}"><i class="material-icons">power_settings_new</i></a></li>
       </ul>
     </div>
@@ -44,7 +43,7 @@
         <div class="card">
             <div class="collection">
                 {% for frnd in hiddenfrnds %}
-                <a href="{% url 'real_chat:chat' currUser.id frnd.id  %}" class="collection-item row">
+                <a href="{% url 'real_chat:hide_friends' currUser.id frnd.id  %}" class="collection-item row">
                     <!-- <img src="https://frontend-1.adjust.com/new-assets/images/site-images/interface/user.svg" class="col s4"> -->
                     <div class="col s4"><i class="friend-icon">{{ frnd.name.0 }}</i></div>
                     <div class="col s8">

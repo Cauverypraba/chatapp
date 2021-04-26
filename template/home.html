@@ -59,14 +59,13 @@ header {
 .container {
     position: absolute;
     right: 60%;
-    top: 30%;
     border-radius: 5px;
     /* background-color: #dac2c2; */
     border-color: lightgray;
     padding: 20px 20px 20px 20px;
     width: 30%;
     margin: 0 auto;
-    border: 3px solid black;
+    border: 2px solid black;
     border-radius: 5px;
     margin-top: 15px;
     margin-bottom: 15px
@@ -79,14 +78,13 @@ header {
 .container2 {
   position: absolute;
   left: 50%;
-  top: 20%;
   border-radius: 5px;
   /*background-color: rgb(182, 218, 218);*/
   border-color: lightgray;
   padding: 30px 30px 50px 50px;
   width: 30%;
   margin: 0 auto;
-  border: 3px solid black;
+  border: 2px solid black;
   border-radius: 5px;
   margin-top: 15px;
   margin-bottom: 15px
@@ -102,7 +100,7 @@ header {
   padding: 30px 30px 50px 50px;
   width: 30%;
   margin: 0 auto;
-  border: 3px solid black;
+  border: 2px solid black;
   border-radius: 5px;
   margin-top: 15px;
   margin-bottom: 15px
@@ -152,14 +150,15 @@ header {
   background-color: rgb(141, 180, 182);
 }
 
-.add-btn, .remove-btn {
+.add-btn, .remove-btn, .hide-btn {
   border: 1px solid green;
   padding: 5px;
   border-radius: 50%;
   float: right;
+  margin: 0 4px;
 }
 
-.container2 .add-btn, .container .remove-btn {
+.container2 .add-btn, .container .remove-btn, .container .hide-btn {
   border-color: gray;
   color: gray;
 }
@@ -174,6 +173,11 @@ header {
   border-color: rgb(146, 68, 68);
   color: red;
   background-color: rgb(248, 129, 129);
+}
+
+.container .hide-btn:hover {
+  border-color: rgb(54, 53, 53);
+  color: rgb(54, 53, 53);
 }
 
 /*header img {
@@ -196,7 +200,7 @@ header {
   <a href="/profile" class="active">Profile</a>
   <a href="/chat" class="active">Chat</a>
   <a style="float: right" href="/logout">Logout</a>
-  <a style="float: right" href="/hideChat">Show Hidden Friends</a>
+  <a style="float: right" href="/checkPassword">Show Hidden Friends</a>
   <a style="float: right">Welcome to JusChat, {{currUser.name}}</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
@@ -206,6 +210,7 @@ header {
 <div class="container">
   <h2>Friends</h2>
   {% for friend in friends %}
+    {% if not friend in hiddenfrnds %}
     <div class="friend">
       <a href="{% url 'real_chat:profile_with_pk' pk=friend.pk %}">
         <h3>{{ friend.name }}</h3>
@@ -214,13 +219,17 @@ header {
         <!-- <button type="button" class="btn btn-default">Remove Friend</button> -->
         <i class="fa fa-trash"></i>
       </a>
-      <a href="{% url 'real_chat:hide_friends' operation='add' pk=friend.pk %}">Hide Friend</a>
+      <a href="{% url 'real_chat:hide_friends' operation='add' pk=friend.pk %}" class="hide-btn">
+        <i class="fa fa-eye-slash" aria-hidden="true"></i>
+      </a>
     </div>
+    {% endif %}
   {% endfor %}
 </div>
 <div class="container2">
   <h2>All Users</h2>
   {% for chatUsers in users %}
+  {% if not chatUsers in friends %}
   <div class="user">
     <a href="{% url 'real_chat:profile_with_pk' pk=chatUsers.pk %}">
       <h3>{{ chatUsers.name }}</h3>
@@ -230,6 +239,7 @@ header {
       <i class="fa fa-plus"></i>
     </a>
   </div>
+  {% endif %}
   {% endfor %}
 </div>
 <!-- <div class="container3">

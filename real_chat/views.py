@@ -35,20 +35,20 @@ def login(request):
     chatUser = user.objects.get(name=username)
     print('inside login view',chatUser.name)
     users = user.objects.exclude(id=chatUser.id)
-    # print('user',users)
     try:
        friend = FriendList.objects.get(current_user=chatUser)
-    #    print('###',users,'###')
+       print('###',friend.id,'###')
        friends = friend.users.all()
        print('friends', friends)
-    #    users = user.objects.exclude(id=friends)
+    #    users = user.objects.exclude(id=friends.id)
+    #    print('users',users)
        hidefrnd = HiddenFriends.objects.get(current_user=chatUser)
        print('hidefriend',hidefrnd)
        hiddenfrnds = hidefrnd.users.all()
-       print(hiddenfrnds)
+       print('hiddenfrnds',hiddenfrnds)
     except:
         friends = FriendList.objects.none()
-        hidefrnd = HiddenFriends.objects.none()
+        hiddenfrnds = HiddenFriends.objects.none()
     print(friend.id)    
     #print('frnds',friends)
     # users = user.objects.exclude(id=friends.id)
@@ -59,7 +59,6 @@ def login(request):
         'hiddenfrnds': hiddenfrnds}) 
         response.set_cookie('last_connection', datetime.datetime.now())
         response.set_cookie('username', chatUser.name)
-        print('inside login')
         return response
         # return redirect('chat/')
     return redirect('signupPage/')
@@ -79,16 +78,20 @@ def homePage(request):
        print(hiddenfrnds)
     except:
         friends = FriendList.objects.none()
-        hidefrnd = HiddenFriends.objects.none()
-    return render(request, 'home.html', {'currUser': chatUser, 'users':users, 'friends': friends,'hidefrnd': hidefrnd})
+        hiddenfrnds = HiddenFriends.objects.none()
+    return render(request, 'home.html', {'currUser': chatUser, 'users':users, 'friends': friends,
+    'hiddenfrnds': hiddenfrnds})
 
 def profilePage(request, pk=None):
     users = user.objects.all()    
     username = request.COOKIES['username']
     chatUser = user.objects.get(name=username)
+    print('inside profile')
+    # chatUser = user.objects.get(pk=pk)
+    # print("##",chatUser.name)
     if pk:
         chatUser = user.objects.get(pk=pk)
-        #print("##",chatUser.name)
+        print("##",chatUser.name)
     else:
         chatUsers = request.user
     return render(request, 'profile.html', {'currUser':chatUser, 'users':users})
@@ -133,31 +136,66 @@ def change_friends(request, operation, pk):
     chatUser = user.objects.get(name=username)
     if operation == 'add':
         FriendList.make_friend(chatUser, friend)
-        print('in changefrnd',friend)
     elif operation == 'remove':
         FriendList.lose_friend(chatUser, friend)
     # elif operation == 'hide':
     #     FriendList.hide_friend(chatUser, friend)        
     return redirect('/homePage')
 
+def checkPassword(request):
+    name = request.POST.get('username')
+    password = request.POST.get('psw')
+    try:
+        chatUser = user.objects.get(name=name)
+        pw = check_password(password,chatUser.password)
+        if pw:
+            print(pw)
+            return redirect('hidePage/')
+    except:
+        chatUser = user.objects.none()
+    print('checkpassword page')        
+    return render(request, 'checkPassword.html')    
+
 def hidePage(request):
-    return render(request,'hideFriends.html')
+    hidefrnd = []
+    username = request.COOKIES['username']
+    chatUser = user.objects.get(name=username)
+    users = user.objects.exclude(id=chatUser.id)
+    print('users',users)
+    print('inside hide Page')
+    try :
+        # hidefrnd = user.objects.get(pk=pk)
+        # print('friend',hidefrnd.name)
+        # HiddenFriends.hide_friend(chatUser, hidefrnd)
+        hidefrnd = HiddenFriends.objects.get(current_user=chatUser)
+        print('hidefriend',hidefrnd)
+        hiddenfrnds = hidefrnd.users.all()
+        print(hiddenfrnds)
+    except:
+        hiddenfrnds = HiddenFriends.objects.all()
+        print('no hidden frnds',type(hiddenfrnds))        
+    return render(request, 'hideFriends.html', {'currUser': chatUser, 'hiddenfrnds': hiddenfrnds})
 
 def hideChat(request,operation, pk):
     hidefrnd = []
     username = request.COOKIES['username']
     chatUser = user.objects.get(name=username)
+    users = user.objects.exclude(id=chatUser.id)
     print('inside hide chat')
     try :
         hidefrnd = user.objects.get(pk=pk)
         print('friend',hidefrnd.name)
-        hidefrnd = HiddenFriends.objects.get(current_user=chatUser)
-        print('hidefriend',hidefrnd)
-        hiddenfrnds = hidefrnd.users.all()
-        print(hiddenfrnds)
         HiddenFriends.hide_friend(chatUser, hidefrnd)
+        hidefrnd = HiddenFriends.objects.get(current_user=chatUser)
+        # print('hidefriend',hidefrnd)
+        hiddenfrnds = hidefrnd.users.all()
+        # print(hiddenfrnds)
     except:
-        hidefrnd = HiddenFriends.objects.none()    
+        hiddenfrnds = HiddenFriends.objects.all()
+    if operation == 'add':
+        # HiddenFriends.hide_friend(chatUser, hidefrnd)
+        return redirect('/homePage')    
+    # HiddenFriends.hide_friend(chatUser, hidefrnd)        
     return render(request, 'hideFriends.html', {'currUser': chatUser, 'hiddenfrnds': hiddenfrnds})
     # return render(request,'home.html', {'hidefrnd': hidefrnd})
     # return redirect('/homePage')
@@ -204,6 +242,7 @@ def message_list(request, sender=None, receiver=None):
 
 def message_view(request, sender, receiver):
     if request.method == "GET":
+        print('inside message view')
         username = request.COOKIES['username']
         chatUser = user.objects.get(name=username)
         print(chatUser.id)
