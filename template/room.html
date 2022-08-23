@@ -10,7 +10,7 @@
     <button id="chat-message-submit" type="submit" value="Send">Send</button>
 </body>z
 <script>
-    var roomName = {{ room_name_json }};
+    var roomName = { room_name_json };
     var chatSocket = new WebSocket(
         'wss://' + window.location.host +
         '/ws/chat/' + roomName + '/');

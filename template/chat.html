@@ -42,7 +42,8 @@
         <div class="col s3">
         <div class="card">
             <div class="collection">
-                {% for friend in friends %}
+                {% for friend in friends%}
+                {% if friend not in hiddenfrnds %}
                 <a href="{% url 'real_chat:chat' currUser.id friend.id  %}" class="collection-item row">
                     <!-- <img src="https://frontend-1.adjust.com/new-assets/images/site-images/interface/user.svg" class="col s4"> -->
                     <div class="col s4"><i class="friend-icon">{{ friend.name.0 }}</i></div>
@@ -50,6 +51,7 @@
                     <span class="title" style="font-weight: bolder">{{ friend.name }}</span>
                     </div>
                 </a>
+                {% endif %}
                 {% endfor %}
             </div>
         </div>
